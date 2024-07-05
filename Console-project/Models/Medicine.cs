@@ -1,12 +1,32 @@
 ﻿
 
+using Console_project.Exceptions;
+
 namespace Console_project.Models
 {
     public class Medicine : BaseEntity
     {
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public int CategoryId { get; set; }
+
+        private int _categoryId;
+        public int CategoryId
+        {
+            get => CategoryId;
+            set
+            {
+                if (CategoryChecker(value))
+                {
+
+                   _categoryId= value;
+                }
+                else
+                {
+                    throw new NotFoundException("Id not found");
+                }
+            }
+
+        }
         public int UserId { get; set; }
 
         public DateTime CreatedDate { get; set; }
@@ -18,6 +38,19 @@ namespace Console_project.Models
             CategoryId = categoryId;
             UserId = userId;
             CreatedDate = DateTime.Now;
+        }
+
+        public bool CategoryChecker(int id)
+        {
+            foreach (var itemId in DB.categories)
+            {
+                if (itemId.Id == id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Console_project.Models;
+﻿using Console_project.Exceptions;
+using Console_project.Models;
 
 namespace Console_project.Services
 {
@@ -6,68 +7,131 @@ namespace Console_project.Services
     {
         public void CreateMedicine(Medicine medicine)
         {
-            Array.Resize(ref DB.medicineData, DB.medicineData.Length + 1);
+            bool hasCategory = false;
 
-            DB.medicineData[DB.medicineData.Length - 1] = medicine;
+
+            foreach (var category in DB.categories)
+            {
+                if (category.Id == medicine.Id)
+                {
+
+                    hasCategory = true;
+                    break;
+                }
+
+            }
+            if (hasCategory)
+            {
+
+                Array.Resize(ref DB.medicines, DB.medicines.Length + 1);
+
+                DB.medicines[DB.medicines.Length - 1] = medicine;
+            }
+            else
+            {
+                throw new NotFoundException("Category not found.");
+            }
+
         }
 
         public Medicine[] GetAllMedicine()
         {
-            return DB.medicineData;
+            return DB.medicines;
         }
 
         public Medicine GetMedicineById(int id)
         {
-            foreach (var medItem in DB.medicineData)
+            Medicine foundMedicine = null;
+
+            foreach (var medicine in DB.medicines)
             {
-                if (medItem.Id == id)
+                if (medicine.Id == id)
                 {
-                    return medItem;
+                    foundMedicine = medicine;
+                    break;
                 }
             }
-            return null;
+
+            if (foundMedicine != null)
+            {
+                Console.WriteLine(foundMedicine);
+                return foundMedicine;
+
+            }
+            else
+            {
+                throw new NotFoundException("Medicine not found.");
+
+            }
+
         }
 
         public Medicine GetMedicineByName(string name)
         {
-            foreach (var medItem in DB.medicineData)
+            Medicine foundMedicine = null;
+            foreach (var medicine in DB.medicines)
             {
-                if (medItem.Name == name)
+                if (medicine.Name == name)
                 {
-                    return medItem;
+                    foundMedicine = medicine;
+                    Console.WriteLine(medicine);
                 }
             }
-            return null;
+
+            if (foundMedicine != null)
+            {
+                Console.WriteLine(foundMedicine);
+                return foundMedicine;
+            }
+            else
+            {
+                throw new NotFoundException($"Medicine with name: {name} not found.");
+            }
         }
 
         public Medicine GetMedicineByCategory(int id)
         {
-            foreach (var medItem in DB.medicineData)
+            Medicine foundMedicine = null;
+            foreach (var medicine in DB.medicines)
             {
-                if (medItem.CategoryId == id)
+                if (medicine != null)
                 {
-                    return medItem;
+                    if (medicine.CategoryId == id)
+                    {
+                        foundMedicine = medicine;
+                    }
                 }
+
             }
-            return null;
+
+            if (foundMedicine != null)
+            {
+                Console.WriteLine(foundMedicine);
+                return foundMedicine;
+            }
+            else
+            {
+                throw new NotFoundException($"Medicine witd ID: {id} not found");
+
+            }
         }
 
         public void RemoveMedicine(int elementId)
         {
-            Medicine[] tempArray = new Medicine[DB.medicineData.Length - 1];
+            Medicine[] tempArray = new Medicine[DB.medicines.Length - 1];
             int idx = 0;
 
-            for (int i = 0; i < DB.medicineData.Length; i++)
+            for (int i = 0; i < DB.medicines.Length; i++)
             {
-                if (DB.medicineData[i].Id != elementId)
+                if (DB.medicines[i].Id != elementId)
                 {
-                    tempArray[idx] = DB.medicineData[i];
+                    tempArray[idx] = DB.medicines[i];
                     idx++;
 
                 }
 
             }
-            DB.medicineData = tempArray;
+            DB.medicines = tempArray;
 
         }
 
@@ -75,9 +139,9 @@ namespace Console_project.Services
         {
             int tempIdx = -1;
 
-            for (int i = 0; i < DB.medicineData.Length; i++)
+            for (int i = 0; i < DB.medicines.Length; i++)
             {
-                if (DB.medicineData[i].Id == id)
+                if (DB.medicines[i].Id == id)
                 {
                     tempIdx = i;
                     break;
@@ -85,11 +149,11 @@ namespace Console_project.Services
             }
             if (tempIdx >= 0)
             {
-                DB.medicineData[tempIdx] = updatedMedicine;
+                DB.medicines[tempIdx] = updatedMedicine;
             }
             else
             {
-                Console.WriteLine($"Medicine data with ID--{id} doen't exsist.");
+                throw new NotFoundException($"Medicine data with ID--{id} doen't exsist.");
             }
 
         }
