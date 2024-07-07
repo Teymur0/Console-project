@@ -34,9 +34,12 @@ namespace Console_project.Services
 
         }
 
-        public Medicine[] GetAllMedicine()
+        public void GetAllMedicine()
         {
-            return DB.medicines;
+            foreach (var medicine in DB.medicines)
+            {
+                Console.WriteLine($"ID: {medicine.Id}, Name: {medicine.Name}, Price: {medicine.Price}, Category ID: {medicine.CategoryId}, User ID: {medicine.UserId}, Created Date: {medicine.CreatedDate}");
+            }
         }
 
         public Medicine GetMedicineById(int id)

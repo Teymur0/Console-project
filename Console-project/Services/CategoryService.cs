@@ -11,5 +11,13 @@ namespace Console_project.Services
             DB.categories[DB.categories.Length - 1] = category;
         }
 
+        public void GetAllCategories()
+        {
+            foreach (var category in DB.categories)
+            {
+                Console.WriteLine($"ID: {category.Id}, Name: {category.Name}");
+
+            }
+        }
     }
 }
