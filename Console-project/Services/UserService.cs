@@ -79,7 +79,6 @@ namespace Console_project.Services
         public void Register(string fullname, string email, string password)
         {
 
-            if (fullname == null) { }
 
             if (ValidateFullName(fullname) && ValidateEmailAddress(email) && ValidatePassword(password))
             {
